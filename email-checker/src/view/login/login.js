@@ -66,9 +66,12 @@ class Login extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};    
+        // initialize state
+        this.state = {};  
+        // refs
         this.usernameRef = React.createRef();          
         this.passwordRef = React.createRef();
+        // bind
         this.login = this.login.bind(this);
     }
 

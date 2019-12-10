@@ -38,23 +38,29 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
+        // initialize state
         this.state = {
-            lists: []
+            lists: [],
+            visible: true
         };   
-
+        // get key
         let key = Get('key');
-        if(key === undefined || key.length < 1)
+        // check key integrity
+        if(key == null || key.length < 1) {
             window.location.pathname = '/';
-
+            this.state.visible = false;
+            return;
+        }
+        // Get all lists.
         GetAllLists(key).then(data => {
             this.setState({lists: data});
         });
     }
 
     getRenderedList() {
-        return this.state.lists.map(elem => {
+        return this.state.lists.map((elem) => {
             return (
-                <TR>
+                <TR key={elem.id}>
                     <TD>{elem.id}</TD>
                     <TD>{elem.name}</TD>
                     <TD><Link to={`list/${elem.name}/${elem.id}`}>Check emails</Link></TD>
@@ -64,6 +70,9 @@ class List extends React.Component {
     }
 
     render() {
+        if(!this.state.visible)
+            return null;
+
         return (
             <div>
                 <Title>All Lists</Title>

@@ -36,23 +36,30 @@ const TD = styled.td`
 class ListMembers extends React.Component {
     constructor(props) {
         super(props);
+        // initialize state
         this.state = {
-            members: []
+            members: [],
+            visible: true
         };
-        
+        // get key
         let key = Get('key');
-        if(key === undefined || key.length < 1)
+        // check integrity
+        if(key == null || key.length < 1) {
             window.location.pathname = '/';
-
-            GetAllMembers(key, this.props.match.params.id).then(data => {
+            this.state.visible = false;
+            return;
+        }
+            
+        // get all members of the current list.
+        GetAllMembers(key, this.props.match.params.id).then(data => {
             this.setState({members: data});
         });
     }
 
     getRenderedList() {
-        return this.state.members.map(elem => {
+        return this.state.members.map((elem) => {
             return (
-                <TR>
+                <TR key={elem.id}>
                     <TD>{elem.id}</TD>
                     <TD>{elem.email}</TD>
                     <TD>{elem.user}</TD>
@@ -66,6 +73,9 @@ class ListMembers extends React.Component {
     }
 
     render() {
+        if(!this.state.visible)
+            return null;
+
         return (
             <div>
                 <Title>All members for the list {this.props.match.params.name}</Title>
