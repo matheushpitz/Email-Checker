@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
-import {GetAllLists} from './list.service';
 import {Get} from '../../store/store';
+import { GetAllMembers } from './list-members.service';
 
 const Title = styled.h1`
     text-align: center;
@@ -34,30 +33,33 @@ const TD = styled.td`
     border-bottom: 1px solid #ddd;
 `;
 
-class List extends React.Component {
-
+class ListMembers extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            lists: []
-        };   
-
+            members: []
+        };
+        
         let key = Get('key');
         if(key === undefined || key.length < 1)
             window.location.pathname = '/';
 
-        GetAllLists(key).then(data => {
-            this.setState({lists: data});
+            GetAllMembers(key, this.props.match.params.id).then(data => {
+            this.setState({members: data});
         });
     }
 
     getRenderedList() {
-        return this.state.lists.map(elem => {
+        return this.state.members.map(elem => {
             return (
                 <TR>
                     <TD>{elem.id}</TD>
-                    <TD>{elem.name}</TD>
-                    <TD><Link to={`list/${elem.name}/${elem.id}`}>Check emails</Link></TD>
+                    <TD>{elem.email}</TD>
+                    <TD>{elem.user}</TD>
+                    <TD>{elem.domain}</TD>
+                    <TD>{elem.free ? 'Yes' : 'No'}</TD>
+                    <TD>{elem.result}</TD>
+                    <TD>{elem.reason}</TD>
                 </TR>
             );
         });
@@ -66,13 +68,17 @@ class List extends React.Component {
     render() {
         return (
             <div>
-                <Title>All Lists</Title>
+                <Title>All members for the list {this.props.match.params.name}</Title>
                 <Table>
                     <TBody>
                         <TR>
                             <TH>ID</TH>
-                            <TH>Name</TH>
-                            <TH>Action</TH>
+                            <TH>Email</TH>
+                            <TH>User</TH>
+                            <TH>Domain</TH>
+                            <TH>Free</TH>
+                            <TH>Result</TH>
+                            <TH>Reason</TH>
                         </TR>
                         {this.getRenderedList()}
                     </TBody>
@@ -80,7 +86,6 @@ class List extends React.Component {
             </div>
         );
     }
-
 }
 
-export default List;
+export default ListMembers;
